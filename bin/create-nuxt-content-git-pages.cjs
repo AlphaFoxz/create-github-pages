@@ -10226,8 +10226,9 @@ function optionProject(projectName, prefix) {
   if (prefix && !prefix.startsWith("/")) {
     prefix = "/" + prefix;
   }
-  const isSingleProject = checkIsSingleProject();
-  const repoRootPath = isSingleProject ? `./${projectName}` : `.`;
+  const isWrappedWiki = checkIsWrappedWiki();
+  const wikiRootPath = `./${projectName}`;
+  const repoRootPath = isWrappedWiki ? wikiRootPath : `.`;
   const template = `# https://github.com/actions/deploy-pages#usage
 name: Deploy to GitHub Pages
 on:
@@ -10248,7 +10249,7 @@ jobs:
         uses: pnpm/action-setup@v3
         with:
           version: 8
-      - run: cd ${repoRootPath}
+      - run: cd ${wikiRootPath}
       # Pick your own package manager and build script
       - run: pnpm install
       # Setup environment variables
@@ -10288,7 +10289,7 @@ jobs:
   const actionFilePath = import_node_path2.default.join(actionDirPath, "github-pages.yml");
   import_node_fs2.default.writeFileSync(actionFilePath, template, "utf-8");
 }
-function checkIsSingleProject() {
+function checkIsWrappedWiki() {
   return !import_node_fs2.default.existsSync("./.git") && !import_node_fs2.default.existsSync("./package.json");
 }
 
