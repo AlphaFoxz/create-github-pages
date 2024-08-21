@@ -6,13 +6,13 @@ let result: {
 } = {}
 
 export async function getCustomAnswers(): Promise<typeof result> {
-  const defaultProjectName = '.wiki'
+  const defaultProjectName = '.git-pages'
   result = await prompts([
     {
       name: 'projectName',
       type: 'text',
       message: 'insert the project name: ',
-      initial: '.wiki',
+      initial: defaultProjectName,
       onState: (state) => {
         if (!state.value || /(\s|\/|\\)+/.test(state.value)) {
           return state.value
@@ -23,13 +23,13 @@ export async function getCustomAnswers(): Promise<typeof result> {
     {
       name: 'prefix',
       type: 'text',
-      message: 'insert the project prefix: ',
+      message: 'insert the url prefix: ',
       initial: '',
       onState: (state) => {
         if (!state.value || /(\s|\/|\\)+/.test(state.value)) {
-          return state.value
+          return ''
         }
-        return defaultProjectName
+        return state.value
       },
     },
   ])

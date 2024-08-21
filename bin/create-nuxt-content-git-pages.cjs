@@ -5613,13 +5613,13 @@ var import_node_fs3 = __toESM(require("node:fs"), 1);
 var import_prompts = __toESM(require_prompts3(), 1);
 var result = {};
 async function getCustomAnswers() {
-  const defaultProjectName = ".wiki";
+  const defaultProjectName = ".git-pages";
   result = await (0, import_prompts.default)([
     {
       name: "projectName",
       type: "text",
       message: "insert the project name: ",
-      initial: ".wiki",
+      initial: defaultProjectName,
       onState: (state) => {
         if (!state.value || /(\s|\/|\\)+/.test(state.value)) {
           return state.value;
@@ -5630,13 +5630,13 @@ async function getCustomAnswers() {
     {
       name: "prefix",
       type: "text",
-      message: "insert the project prefix: ",
+      message: "insert the url prefix: ",
       initial: "",
       onState: (state) => {
         if (!state.value || /(\s|\/|\\)+/.test(state.value)) {
-          return state.value;
+          return "";
         }
-        return defaultProjectName;
+        return state.value;
       }
     }
   ]);
@@ -10227,8 +10227,8 @@ function optionProject(projectName, prefix) {
     prefix = "/" + prefix;
   }
   const isWrappedWiki = checkIsWrappedWiki();
-  const wikiRootPath = `./${projectName}`;
-  const repoRootPath = isWrappedWiki ? wikiRootPath : `.`;
+  const wikiRootPath = isWrappedWiki ? `./${projectName}` : ".";
+  const repoRootPath = isWrappedWiki ? `.` : wikiRootPath;
   const template = `# https://github.com/actions/deploy-pages#usage
 name: Deploy to GitHub Pages
 on:
@@ -10249,21 +10249,19 @@ jobs:
         uses: pnpm/action-setup@v3
         with:
           version: 8
-      - run: cd ${wikiRootPath}
       # Pick your own package manager and build script
-      - run: pnpm install
+      - run: cd ${wikiRootPath} && pnpm install
       # Setup environment variables
       # NUXT_APP_BASE_URL is your GitHub Repo Name.
-      - run: |
-          echo 'NUXT_APP_BASE_URL=${prefix}' > ./.env
+      - run: cd ${wikiRootPath} && echo 'NUXT_APP_BASE_URL=${prefix}' > ./.env
       # \`pnpm build\` will:
       # 1. copy /README.md to /content/AUTO_GEN_README.md (See package.json->scripts->build)
       # 2. exec \`npx nuxt build --preset github_pages\` (See https://nuxt.com.cn/deploy/github-pages)
-      - run: pnpm build
+      - run: cd ${wikiRootPath} && pnpm build
       - name: Upload artifact \u{1F680}
         uses: actions/upload-pages-artifact@v1
         with:
-          path: ./.output/public
+          path: ${wikiRootPath}/.output/public
 
   # Deployment job
   deploy:
@@ -10290,7 +10288,7 @@ jobs:
   import_node_fs2.default.writeFileSync(actionFilePath, template, "utf-8");
 }
 function checkIsWrappedWiki() {
-  return !import_node_fs2.default.existsSync("./.git") && !import_node_fs2.default.existsSync("./package.json");
+  return import_node_fs2.default.existsSync("./.git") || import_node_fs2.default.existsSync("./package.json");
 }
 
 // index.ts

@@ -6,8 +6,8 @@ export function optionProject(projectName: string, prefix: string) {
     prefix = '/' + prefix
   }
   const isWrappedWiki = checkIsWrappedWiki()
-  const wikiRootPath = `./${projectName}`
-  const repoRootPath = isWrappedWiki ? wikiRootPath : `.`
+  const wikiRootPath = isWrappedWiki ? `./${projectName}` : '.'
+  const repoRootPath = isWrappedWiki ? `.` : wikiRootPath
   const template = `# https://github.com/actions/deploy-pages#usage
 name: Deploy to GitHub Pages
 on:
@@ -28,21 +28,19 @@ jobs:
         uses: pnpm/action-setup@v3
         with:
           version: 8
-      - run: cd ${wikiRootPath}
       # Pick your own package manager and build script
-      - run: pnpm install
+      - run: cd ${wikiRootPath} && pnpm install
       # Setup environment variables
       # NUXT_APP_BASE_URL is your GitHub Repo Name.
-      - run: |
-          echo 'NUXT_APP_BASE_URL=${prefix}' > ./.env
+      - run: cd ${wikiRootPath} && echo 'NUXT_APP_BASE_URL=${prefix}' > ./.env
       # \`pnpm build\` will:
       # 1. copy /README.md to /content/AUTO_GEN_README.md (See package.json->scripts->build)
       # 2. exec \`npx nuxt build --preset github_pages\` (See https://nuxt.com.cn/deploy/github-pages)
-      - run: pnpm build
+      - run: cd ${wikiRootPath} && pnpm build
       - name: Upload artifact 🚀
         uses: actions/upload-pages-artifact@v1
         with:
-          path: ./.output/public
+          path: ${wikiRootPath}/.output/public
 
   # Deployment job
   deploy:
@@ -70,5 +68,5 @@ jobs:
 }
 
 function checkIsWrappedWiki(): boolean {
-  return !fs.existsSync('./.git') && !fs.existsSync('./package.json')
+  return fs.existsSync('./.git') || fs.existsSync('./package.json')
 }
