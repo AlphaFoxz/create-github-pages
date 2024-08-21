@@ -1,0 +1,13 @@
+{
+  "extends": "@tsconfig/node20/tsconfig.json",
+  "include": [
+    "utils/**/*",
+    "index.ts"
+  ],
+  "compilerOptions": {
+    "strict": false,
+    "resolveJsonModule": true,
+    "moduleResolution": "Bundler",
+    "module": "ESNext"
+  }
+}

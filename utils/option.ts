@@ -1,0 +1,73 @@
+import fs from 'node:fs'
+import path from 'node:path'
+
+export function optionProject(projectName: string, prefix: string) {
+  if (prefix && !prefix.startsWith('/')) {
+    prefix = '/' + prefix
+  }
+  const isSingleProject = checkIsSingleProject()
+  const repoRootPath = isSingleProject ? `./${projectName}` : `.`
+  const template = `# https://github.com/actions/deploy-pages#usage
+name: Deploy to GitHub Pages
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: corepack enable
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+      - run: cd ${repoRootPath}
+      # Pick your own package manager and build script
+      - run: pnpm install
+      # Setup environment variables
+      # NUXT_APP_BASE_URL is your GitHub Repo Name.
+      - run: |
+          echo 'NUXT_APP_BASE_URL=${prefix}' > ./.env
+      # \`pnpm build\` will:
+      # 1. copy /README.md to /content/AUTO_GEN_README.md (See package.json->scripts->build)
+      # 2. exec \`npx nuxt build --preset github_pages\` (See https://nuxt.com.cn/deploy/github-pages)
+      - run: pnpm build
+      - name: Upload artifact 🚀
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./.output/public
+
+  # Deployment job
+  deploy:
+    # Add a dependency to the build job
+    needs: build
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      pages: write # to deploy to Pages
+      id-token: write # to verify the deployment originates from an appropriate source
+    # Deploy to the github_pages environment
+    environment:
+      name: github_pages
+      url: \${{ steps.deployment.outputs.page_url }}
+    # Specify runner + deployment step
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
+`
+  const actionDirPath = path.join(repoRootPath, '.github', 'workflows')
+  fs.mkdirSync(actionDirPath, { recursive: true })
+  const actionFilePath = path.join(actionDirPath, 'github-pages.yml')
+  fs.writeFileSync(actionFilePath, template, 'utf-8')
+}
+
+function checkIsSingleProject(): boolean {
+  return !fs.existsSync('./.git') && !fs.existsSync('./package.json')
+}
