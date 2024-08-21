@@ -5,8 +5,9 @@ export function optionProject(projectName: string, prefix: string) {
   if (prefix && !prefix.startsWith('/')) {
     prefix = '/' + prefix
   }
-  const isSingleProject = checkIsSingleProject()
-  const repoRootPath = isSingleProject ? `./${projectName}` : `.`
+  const isWrappedWiki = checkIsWrappedWiki()
+  const wikiRootPath = `./${projectName}`
+  const repoRootPath = isWrappedWiki ? wikiRootPath : `.`
   const template = `# https://github.com/actions/deploy-pages#usage
 name: Deploy to GitHub Pages
 on:
@@ -27,7 +28,7 @@ jobs:
         uses: pnpm/action-setup@v3
         with:
           version: 8
-      - run: cd ${repoRootPath}
+      - run: cd ${wikiRootPath}
       # Pick your own package manager and build script
       - run: pnpm install
       # Setup environment variables
@@ -68,6 +69,6 @@ jobs:
   fs.writeFileSync(actionFilePath, template, 'utf-8')
 }
 
-function checkIsSingleProject(): boolean {
+function checkIsWrappedWiki(): boolean {
   return !fs.existsSync('./.git') && !fs.existsSync('./package.json')
 }
