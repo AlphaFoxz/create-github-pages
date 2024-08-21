@@ -33,9 +33,7 @@ jobs:
       # Setup environment variables
       # NUXT_APP_BASE_URL is your GitHub Repo Name.
       - run: cd ${wikiRootPath} && echo 'NUXT_APP_BASE_URL=${prefix}' > ./.env
-      # \`pnpm build\` will:
-      # 1. copy /README.md to /content/AUTO_GEN_README.md (See package.json->scripts->build)
-      # 2. exec \`npx nuxt build --preset github_pages\` (See https://nuxt.com.cn/deploy/github-pages)
+      # Build project
       - run: cd ${wikiRootPath} && pnpm build
       - name: Upload artifact 🚀
         uses: actions/upload-pages-artifact@v1
