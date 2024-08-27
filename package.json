@@ -23,6 +23,10 @@
     "name": "AlphaFoxz@github.com",
     "email": "841958335@qq.com"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AlphaFoxz/create-nuxt-content-git-pages"
+  },
   "license": "Apache-2.0",
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",
