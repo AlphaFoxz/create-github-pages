@@ -5708,7 +5708,7 @@ async function getCustomAnswers() {
     {
       name: "lang",
       type: "select",
-      message: "Choose your language (English or \u4E2D\u6587)",
+      message: "Choose The language during this creation process",
       choices: [
         { title: "English", value: "en" },
         { title: "\u4E2D\u6587", value: "zh" }
@@ -10315,7 +10315,7 @@ async function download(localPath, repoType = "git", branchName = "base") {
   const repoUrl = repoType === "git" ? gitUrl : giteeUrl;
   const git = simpleGit();
   let successed = true;
-  await git.clone(repoUrl, localPath, [`-b ${branchName}`]).catch((e) => {
+  await git.clone(repoUrl, localPath, ["-b", branchName]).catch((e) => {
     console.error(e);
     successed = false;
   });
@@ -10406,7 +10406,7 @@ init().catch((e) => {
   console.error(t3("console.error.exit"));
 });
 async function init() {
-  console.log("init...");
+  console.log(t3("console.info.scriptStart"));
   const { folderName, prefix } = await getCustomAnswers();
   if (import_node_fs3.default.existsSync(folderName)) {
     console.error(t3("console.error.duplicateFolder", { name: folderName }));

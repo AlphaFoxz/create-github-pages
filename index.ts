@@ -12,7 +12,7 @@ init().catch((e: Error) => {
 })
 
 async function init(): Promise<boolean> {
-  console.log('init...')
+  console.log(t('console.info.scriptStart'))
 
   const { folderName, prefix } = await getCustomAnswers()
   if (fs.existsSync(folderName)) {

@@ -12,7 +12,7 @@ export async function download(localPath: string, repoType: RepoType = 'git', br
   const repoUrl = repoType === 'git' ? gitUrl : giteeUrl
   const git = simpleGit()
   let successed = true
-  await git.clone(repoUrl, localPath, [`-b ${branchName}`]).catch((e: GitError) => {
+  await git.clone(repoUrl, localPath, ['-b', branchName]).catch((e: GitError) => {
     console.error(e)
     successed = false
   })

@@ -15,7 +15,7 @@ export async function getCustomAnswers(): Promise<typeof result> {
     {
       name: 'lang',
       type: 'select',
-      message: 'Choose your language (English or 中文)',
+      message: 'Choose The language during this creation process',
       choices: [
         { title: 'English', value: 'en' },
         { title: '中文', value: 'zh' },
