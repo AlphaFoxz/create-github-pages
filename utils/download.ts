@@ -3,15 +3,17 @@ import fs from 'node:fs'
 import { simpleGit, GitError } from 'simple-git'
 
 export type RepoType = 'git' | 'gitee'
+export type BranchType = 'base'
 
 const gitUrl = `https://github.com/AlphaFoxz/nuxt-content-git-pages-template.git`
 const giteeUrl = `https://gitee.com/AlphaFoxz/nuxt-content-git-pages-template.git`
 
-export async function download(localPath: string, repoType: RepoType = 'git') {
+export async function download(localPath: string, repoType: RepoType = 'git', branchName: BranchType = 'base') {
   const repoUrl = repoType === 'git' ? gitUrl : giteeUrl
   const git = simpleGit()
   let successed = true
-  await git.clone(repoUrl, localPath).catch((e: GitError) => {
+  await git.clone(repoUrl, localPath, [`-b ${branchName}`]).catch((e: GitError) => {
+    console.error(e)
     successed = false
   })
   if (successed) {

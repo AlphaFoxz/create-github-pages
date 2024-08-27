@@ -1,17 +1,38 @@
 import prompts from 'prompts'
+import lang from '../lang'
+
+const t = lang.action.t
+const updateLang = lang.action.updateLang
 
 let result: {
-  projectName?: string
+  folderName?: string
   prefix?: string
 } = {}
 
 export async function getCustomAnswers(): Promise<typeof result> {
   const defaultProjectName = '.git-pages'
+  const { lang } = await prompts([
+    {
+      name: 'lang',
+      type: 'select',
+      message: 'Choose your language (English or 中文)',
+      choices: [
+        { title: 'English', value: 'en' },
+        { title: '中文', value: 'zh' },
+      ],
+    },
+  ])
+  console.warn('lang: ' + lang)
+  if (!lang) {
+    throw Error(t('console.error.userCancel'))
+  }
+  updateLang(lang)
+
   result = await prompts([
     {
-      name: 'projectName',
+      name: 'folderName',
       type: 'text',
-      message: 'insert the project name: ',
+      message: t('question.message.folderName'),
       initial: defaultProjectName,
       onState: (state) => {
         if (!state.value || /(\s|\/|\\)+/.test(state.value)) {
@@ -23,7 +44,7 @@ export async function getCustomAnswers(): Promise<typeof result> {
     {
       name: 'prefix',
       type: 'text',
-      message: 'insert the url prefix: ',
+      message: t('question.message.prefix'),
       initial: '',
       onState: (state) => {
         if (!state.value || /(\s|\/|\\)+/.test(state.value)) {
@@ -33,5 +54,8 @@ export async function getCustomAnswers(): Promise<typeof result> {
       },
     },
   ])
+  if (result.prefix === undefined || result.folderName === undefined) {
+    throw Error(t('console.error.userCancel'))
+  }
   return result
 }

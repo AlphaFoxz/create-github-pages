@@ -5611,14 +5611,120 @@ var import_node_fs3 = __toESM(require("node:fs"), 1);
 
 // utils/questions.ts
 var import_prompts = __toESM(require_prompts3(), 1);
+
+// lang/zh.ts
+var zhDict = {
+  "question.message.folderName": "\u8BF7\u8F93\u5165\u6587\u4EF6\u5939\u540D\u79F0\uFF0C\u8FD9\u5C06\u5728\u5F53\u524D\u76EE\u5F55\u521B\u5EFA\u4E00\u4E2A\u6587\u4EF6\u5939\uFF0C\u7528\u4E8E\u521D\u59CB\u5316\u6587\u6863\u9879\u76EE",
+  "question.message.prefix": "\u8BF7\u8F93\u5165\u6B64\u9879\u76EE\u7684GitPages\u524D\u7F00\uFF08\u4ED3\u5E93\u540D\uFF09\uFF0C\u5982\uFF1A/ProjectName",
+  "console.info.scriptStart": "===== \u811A\u672C\u5F00\u59CB\u6267\u884C =====",
+  "console.error.exit": "===== \u5F02\u5E38\u9000\u51FA =====",
+  "console.error.duplicateFolder": "\u540C\u540D\u6587\u4EF6\u5939\u6216\u6587\u4EF6\u5DF2\u5B58\u5728\uFF1A{name}",
+  "console.error.subtitle": "\u9519\u8BEF: ",
+  "console.error.userCancel": "\u7528\u6237\u7EC8\u6B62\u4E86\u811A\u672C\u6267\u884C",
+  "console.error.retryDownloadTemplate": "\u4E0B\u8F7D\u6A21\u677F\u5931\u8D25\uFF0C\u5C1D\u8BD5\u4ECEgitee\u4E0B\u8F7D",
+  "console.error.downloadTemplate": "\u4E0B\u8F7D\u6A21\u677F\u5931\u8D25\uFF0C\u8BF7\u68C0\u67E5\u60A8\u7684\u7F51\u7EDC",
+  "console.success.complete": "===== \u7A0B\u5E8F\u6267\u884C\u6210\u529F ====="
+};
+var zh_default = zhDict;
+
+// lang/en.ts
+var enDict = {
+  "question.message.folderName": "Input folder name, this will create a folder in the current directory to initialize the md project",
+  "question.message.prefix": "Input this project GitPages prefix (repository name), e.g.: /ProjectName",
+  "console.info.scriptStart": "===== Script start =====",
+  "console.error.exit": "===== Exit with error =====",
+  "console.error.duplicateFolder": "Folder or file already exists: {name}",
+  "console.error.subtitle": "ERROR: ",
+  "console.error.userCancel": "User canceled",
+  "console.error.retryDownloadTemplate": "Download template failed, try to download from gitee",
+  "console.error.downloadTemplate": "Download Failed, please check your network",
+  "console.success.complete": "===== Program execution succeeded ====="
+};
+var en_default = enDict;
+
+// utils/reactive.ts
+function ref(v) {
+  const data = {
+    value: v,
+    _watchCallbacks: []
+  };
+  return new Proxy(data, {
+    get: (obj, k) => {
+      return obj[k];
+    },
+    set: (obj, k, v2) => {
+      obj[k] = v2;
+      for (const f of obj._watchCallbacks) {
+        f(obj[k], v2);
+      }
+      return true;
+    }
+  });
+}
+
+// lang/index.ts
+var currentDict = ref(en_default);
+function t(key, attr1, attr2) {
+  let v = currentDict.value[key];
+  if (!v) {
+    if (typeof attr1 === "string") {
+      v = attr1;
+    } else if (typeof attr2 === "string") {
+      v = attr2;
+    }
+  }
+  if (!v) {
+    return "";
+  }
+  if (typeof attr1 === "object") {
+    v = v.replace(/\{\s*([a-zA-z_]+)\s*\}/g, (_, name) => {
+      return String(attr1[name]);
+    });
+  }
+  return v;
+}
+function updateLang(lang) {
+  if (lang === "zh") {
+    currentDict.value = zh_default;
+  } else if (lang === "en") {
+    currentDict.value = en_default;
+  }
+}
+var lang_default = {
+  state: {},
+  action: {
+    t,
+    updateLang
+  }
+};
+
+// utils/questions.ts
+var t2 = lang_default.action.t;
+var updateLang2 = lang_default.action.updateLang;
 var result = {};
 async function getCustomAnswers() {
   const defaultProjectName = ".git-pages";
+  const { lang } = await (0, import_prompts.default)([
+    {
+      name: "lang",
+      type: "select",
+      message: "Choose your language (English or \u4E2D\u6587)",
+      choices: [
+        { title: "English", value: "en" },
+        { title: "\u4E2D\u6587", value: "zh" }
+      ]
+    }
+  ]);
+  console.warn("lang: " + lang);
+  if (!lang) {
+    throw Error(t2("console.error.userCancel"));
+  }
+  updateLang2(lang);
   result = await (0, import_prompts.default)([
     {
-      name: "projectName",
+      name: "folderName",
       type: "text",
-      message: "insert the project name: ",
+      message: t2("question.message.folderName"),
       initial: defaultProjectName,
       onState: (state) => {
         if (!state.value || /(\s|\/|\\)+/.test(state.value)) {
@@ -5630,7 +5736,7 @@ async function getCustomAnswers() {
     {
       name: "prefix",
       type: "text",
-      message: "insert the url prefix: ",
+      message: t2("question.message.prefix"),
       initial: "",
       onState: (state) => {
         if (!state.value || /(\s|\/|\\)+/.test(state.value)) {
@@ -5640,6 +5746,9 @@ async function getCustomAnswers() {
       }
     }
   ]);
+  if (result.prefix === void 0 || result.folderName === void 0) {
+    throw Error(t2("console.error.userCancel"));
+  }
   return result;
 }
 
@@ -8199,17 +8308,17 @@ __export(push_exports, {
   pushTagsTask: () => pushTagsTask,
   pushTask: () => pushTask
 });
-function pushTagsTask(ref = {}, customArgs) {
+function pushTagsTask(ref2 = {}, customArgs) {
   append(customArgs, "--tags");
-  return pushTask(ref, customArgs);
+  return pushTask(ref2, customArgs);
 }
-function pushTask(ref = {}, customArgs) {
+function pushTask(ref2 = {}, customArgs) {
   const commands = ["push", ...customArgs];
-  if (ref.branch) {
-    commands.splice(1, 0, ref.branch);
+  if (ref2.branch) {
+    commands.splice(1, 0, ref2.branch);
   }
-  if (ref.remote) {
-    commands.splice(1, 0, ref.remote);
+  if (ref2.remote) {
+    commands.splice(1, 0, ref2.remote);
   }
   remove(commands, "-v");
   append(commands, "--verbose");
@@ -10202,11 +10311,12 @@ var simpleGit = gitInstanceFactory;
 // utils/download.ts
 var gitUrl = `https://github.com/AlphaFoxz/nuxt-content-git-pages-template.git`;
 var giteeUrl = `https://gitee.com/AlphaFoxz/nuxt-content-git-pages-template.git`;
-async function download(localPath, repoType = "git") {
+async function download(localPath, repoType = "git", branchName = "base") {
   const repoUrl = repoType === "git" ? gitUrl : giteeUrl;
   const git = simpleGit();
   let successed = true;
-  await git.clone(repoUrl, localPath).catch((e) => {
+  await git.clone(repoUrl, localPath, [`-b ${branchName}`]).catch((e) => {
+    console.error(e);
     successed = false;
   });
   if (successed) {
@@ -10254,9 +10364,7 @@ jobs:
       # Setup environment variables
       # NUXT_APP_BASE_URL is your GitHub Repo Name.
       - run: cd ${wikiRootPath} && echo 'NUXT_APP_BASE_URL=${prefix}' > ./.env
-      # \`pnpm build\` will:
-      # 1. copy /README.md to /content/AUTO_GEN_README.md (See package.json->scripts->build)
-      # 2. exec \`npx nuxt build --preset github_pages\` (See https://nuxt.com.cn/deploy/github-pages)
+      # Build project
       - run: cd ${wikiRootPath} && pnpm build
       - name: Upload artifact \u{1F680}
         uses: actions/upload-pages-artifact@v1
@@ -10292,26 +10400,28 @@ function checkIsWrappedWiki() {
 }
 
 // index.ts
+var t3 = lang_default.action.t;
 init().catch((e) => {
-  console.error("exit with error: " + e.message);
+  console.error(e.message);
+  console.error(t3("console.error.exit"));
 });
 async function init() {
   console.log("init...");
-  const { projectName, prefix } = await getCustomAnswers();
-  if (import_node_fs3.default.existsSync(projectName)) {
-    console.error(`folder or file already exists: ${projectName}`);
+  const { folderName, prefix } = await getCustomAnswers();
+  if (import_node_fs3.default.existsSync(folderName)) {
+    console.error(t3("console.error.duplicateFolder", { name: folderName }));
     return false;
   }
-  let downloaded = await download(`./${projectName}`, "git");
+  let downloaded = await download(`./${folderName}`, "git");
   if (!downloaded) {
-    console.warn(`download from git failed, try to download from gitee...`);
-    downloaded = await download(`./${projectName}`, "gitee");
+    console.warn(t3("console.error.retryDownloadTemplate"));
+    downloaded = await download(`./${folderName}`, "gitee");
   }
   if (!downloaded) {
-    console.error("download template fail!");
+    console.error(t3("console.error.downloadTemplate"));
     return false;
   }
-  optionProject(projectName, prefix);
-  console.info("project create successed!");
+  optionProject(folderName, prefix);
+  console.info(t3("console.success.complete"));
   return true;
 }

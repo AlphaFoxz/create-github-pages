@@ -20,9 +20,6 @@ importers:
       esbuild:
         specifier: ^0.23.1
         version: 0.23.1
-      ncp:
-        specifier: ^2.0.0
-        version: 2.0.0
       prompts:
         specifier: ^2.4.2
         version: 2.4.2
@@ -224,10 +221,6 @@ packages:
   ms@2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
 
-  ncp@2.0.0:
-    resolution: {integrity: sha512-zIdGUrPRFTUELUvr3Gmc7KZ2Sw/h1PiVM0Af/oHB6zgnV1ikqSfRk+TOufi79aHYCW3NiOXmr1BP5nWbzojLaA==}
-    hasBin: true
-
   prompts@2.4.2:
     resolution: {integrity: sha512-NxNv/kLguCA7p3jE8oL2aEBsrJWgAakBpgmgK6lpPWV+WuOmY6r2/zbAVnP+T8bQlA0nzHXSJSJW0Hq7ylaD2Q==}
     engines: {node: '>= 6'}
@@ -389,8 +382,6 @@ snapshots:
   kleur@3.0.3: {}
 
   ms@2.1.2: {}
-
-  ncp@2.0.0: {}
 
   prompts@2.4.2:
     dependencies:

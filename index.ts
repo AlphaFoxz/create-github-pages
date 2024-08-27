@@ -2,29 +2,33 @@ import fs from 'node:fs'
 import { getCustomAnswers } from './utils/questions'
 import { download } from './utils/download'
 import { optionProject } from './utils/option'
+import lang from './lang'
+
+const t = lang.action.t
 
 init().catch((e: Error) => {
-  console.error('exit with error: ' + e.message)
+  console.error(e.message)
+  console.error(t('console.error.exit'))
 })
 
 async function init(): Promise<boolean> {
   console.log('init...')
 
-  const { projectName, prefix } = await getCustomAnswers()
-  if (fs.existsSync(projectName)) {
-    console.error(`folder or file already exists: ${projectName}`)
+  const { folderName, prefix } = await getCustomAnswers()
+  if (fs.existsSync(folderName)) {
+    console.error(t('console.error.duplicateFolder', { name: folderName }))
     return false
   }
-  let downloaded = await download(`./${projectName}`, 'git')
+  let downloaded = await download(`./${folderName}`, 'git')
   if (!downloaded) {
-    console.warn(`download from git failed, try to download from gitee...`)
-    downloaded = await download(`./${projectName}`, 'gitee')
+    console.warn(t('console.error.retryDownloadTemplate'))
+    downloaded = await download(`./${folderName}`, 'gitee')
   }
   if (!downloaded) {
-    console.error('download template fail!')
+    console.error(t('console.error.downloadTemplate'))
     return false
   }
-  optionProject(projectName, prefix)
-  console.info('project create successed!')
+  optionProject(folderName, prefix)
+  console.info(t('console.success.complete'))
   return true
 }
