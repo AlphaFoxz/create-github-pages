@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
-export function optionProject(projectName: string, prefix: string) {
+export function optionProject(projectName: string, prefix: string, branchName: string) {
   if (prefix && !prefix.startsWith('/')) {
     prefix = '/' + prefix
   }
@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - main
+      - ${branchName}
 jobs:
   build:
     runs-on: ubuntu-latest

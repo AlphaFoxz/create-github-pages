@@ -2,6 +2,7 @@ export type LangType = 'zh' | 'en'
 export type DictType = {
   'question.message.folderName': string
   'question.message.prefix': string
+  'question.message.branchName': string
   'console.info.scriptStart': string
   'console.error.exit': string
   'console.error.duplicateFolder': string

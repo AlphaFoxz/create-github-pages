@@ -3,6 +3,7 @@ import { getCustomAnswers } from './utils/questions'
 import { download } from './utils/download'
 import { optionProject } from './utils/option'
 import lang from './lang'
+import { onCancel } from './utils/common'
 
 const t = lang.action.t
 
@@ -11,10 +12,12 @@ init().catch((e: Error) => {
   console.error(t('console.error.exit'))
 })
 
+process.on('SIGINT', onCancel)
+
 async function init(): Promise<boolean> {
   console.log(t('console.info.scriptStart'))
 
-  const { folderName, prefix } = await getCustomAnswers()
+  const { folderName, prefix, branchName } = await getCustomAnswers()
   if (fs.existsSync(folderName)) {
     console.error(t('console.error.duplicateFolder', { name: folderName }))
     return false
@@ -28,7 +31,7 @@ async function init(): Promise<boolean> {
     console.error(t('console.error.downloadTemplate'))
     return false
   }
-  optionProject(folderName, prefix)
+  optionProject(folderName, prefix, branchName)
   console.info(t('console.success.complete'))
   return true
 }

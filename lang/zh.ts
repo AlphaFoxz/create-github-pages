@@ -3,6 +3,7 @@ import { DictType } from './define'
 const zhDict: DictType = {
   'question.message.folderName': '请输入文件夹名称，这将在当前目录创建一个文件夹，用于初始化文档项目',
   'question.message.prefix': '请输入此项目的GitPages前缀（仓库名），如：/ProjectName',
+  'question.message.branchName': '请输入触发git部署的分支名称',
   'console.info.scriptStart': '===== 脚本开始执行 =====',
   'console.error.exit': '===== 异常退出 =====',
   'console.error.duplicateFolder': '同名文件夹或文件已存在：{name}',

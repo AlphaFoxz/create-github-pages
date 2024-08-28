@@ -4,6 +4,7 @@ const enDict: DictType = {
   'question.message.folderName':
     'Input folder name, this will create a folder in the current directory to initialize the md project',
   'question.message.prefix': 'Input this project GitPages prefix (repository name), e.g.: /ProjectName',
+  'question.message.branchName': 'Input branch name witch will trigger git deploy action',
   'console.info.scriptStart': '===== Script start =====',
   'console.error.exit': '===== Exit with error =====',
   'console.error.duplicateFolder': 'Folder or file already exists: {name}',
