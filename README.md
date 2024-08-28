@@ -1,6 +1,6 @@
 # create-nuxt-content-git-pages
 
-## Useage
+## Usages
 
 ```bash
 npm create nuxt-content-git-pages
