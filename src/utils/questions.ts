@@ -16,7 +16,7 @@ let result: {
 } = {}
 
 export async function getCustomAnswers(): Promise<typeof result> {
-  const defaultProjectName = '.git-pages'
+  const defaultProjectName = '.github-pages'
   const defaultBranchName = 'main'
   const defaultPrefix = path.basename(process.cwd()) || path.basename(__dirname)
   const { lang } = await prompts(

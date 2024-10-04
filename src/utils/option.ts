@@ -9,6 +9,7 @@ export function optionProject(projectName: string, prefix: string, branchName: s
   const wikiRootPath = isWrappedWiki ? `./${projectName}` : '.'
   const repoRootPath = isWrappedWiki ? `.` : wikiRootPath
   const template = `# https://github.com/actions/deploy-pages#usage
+# https://nuxt.com/deploy/github-pages
 name: Deploy to GitHub Pages
 on:
   workflow_dispatch:
@@ -19,13 +20,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: corepack enable
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
       - name: Setup pnpm
-        uses: pnpm/action-setup@v3
+        uses: pnpm/action-setup@v4
         with:
           version: 8
       # Pick your own package manager and build script
@@ -36,7 +37,7 @@ jobs:
       # Build project
       - run: cd ${wikiRootPath} && pnpm build
       - name: Upload artifact 🚀
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ${wikiRootPath}/.output/public
 
@@ -57,7 +58,7 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
 `
   const actionDirPath = path.join(repoRootPath, '.github', 'workflows')
   fs.mkdirSync(actionDirPath, { recursive: true })
