@@ -3,10 +3,13 @@ import lang from '../lang'
 import { onCancel } from './common'
 import path from 'node:path'
 
+import { TemplateType } from '../define'
+
 const t = lang.action.t
 const updateLang = lang.action.updateLang
 
 let result: {
+  template?: TemplateType
   folderName?: string
   prefix?: string
   branchName?: string
@@ -35,9 +38,15 @@ export async function getCustomAnswers(): Promise<typeof result> {
   result = await prompts(
     [
       {
+        name: 'template',
+        type: 'select',
+        message: t('question.template'),
+        choices: [{ title: 'Nuxt Content', value: 'nuxt_content' }],
+      },
+      {
         name: 'folderName',
         type: 'text',
-        message: t('question.message.folderName'),
+        message: t('question.folderName'),
         initial: defaultProjectName,
         onState: (state) => {
           if (!state.value || /(\s|\/|\\)+/.test(state.value)) {
@@ -49,7 +58,7 @@ export async function getCustomAnswers(): Promise<typeof result> {
       {
         name: 'prefix',
         type: 'text',
-        message: t('question.message.prefix'),
+        message: t('question.prefix'),
         initial: `/${defaultPrefix}`,
         onState: (state) => {
           if (!state.value || /(\s|\/|\\)+/.test(state.value)) {
@@ -61,7 +70,7 @@ export async function getCustomAnswers(): Promise<typeof result> {
       {
         name: 'branchName',
         type: 'text',
-        message: t('question.message.branchName'),
+        message: t('question.branchName'),
         initial: defaultBranchName,
         onState: (state) => {
           if (!state.value.trim()) {

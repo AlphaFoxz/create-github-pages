@@ -2,10 +2,10 @@ import * as esbuild from 'esbuild'
 
 await esbuild.build({
   bundle: true,
-  entryPoints: ['index.ts'],
+  entryPoints: ['src/index.ts'],
   drop: ['debugger'],
   minify: true,
-  outfile: 'bin/create-nuxt-content-git-pages.cjs',
+  outfile: 'bin/create-github-pages.cjs',
   format: 'cjs',
   platform: 'node',
   target: 'node16',

@@ -9,29 +9,29 @@ const t = lang.action.t
 
 init().catch((e: Error) => {
   console.error(e.message)
-  console.error(t('console.error.exit'))
+  console.error(t('signal.exitWithError'))
 })
 
 process.on('SIGINT', onCancel)
 
 async function init(): Promise<boolean> {
-  console.log(t('console.info.scriptStart'))
+  console.log(t('signal.scriptStarted'))
 
-  const { folderName, prefix, branchName } = await getCustomAnswers()
+  const { template, folderName, prefix, branchName } = await getCustomAnswers()
   if (fs.existsSync(folderName)) {
-    console.error(t('console.error.duplicateFolder', { name: folderName }))
+    console.error(t('message.error.duplicateFolder', { name: folderName }))
     return false
   }
-  let downloaded = await download(`./${folderName}`, 'git')
+  let downloaded = await download(template, `./${folderName}`, 'git')
   if (!downloaded) {
-    console.warn(t('console.error.retryDownloadTemplate'))
-    downloaded = await download(`./${folderName}`, 'gitee')
+    console.warn(t('message.error.retryDownloadTemplate'))
+    downloaded = await download(template, `./${folderName}`, 'gitee')
   }
   if (!downloaded) {
-    console.error(t('console.error.downloadTemplate'))
+    console.error(t('message.error.downloadTemplate'))
     return false
   }
   optionProject(folderName, prefix, branchName)
-  console.info(t('console.success.complete'))
+  console.info(t('signal.exitWithSuccess'))
   return true
 }

@@ -2,14 +2,18 @@ import path from 'node:path'
 import fs from 'node:fs'
 import { simpleGit, GitError } from 'simple-git'
 
-export type RepoType = 'git' | 'gitee'
-export type BranchType = 'base'
+import type { TemplateType, RepoType, BranchType } from '../define'
 
-const gitUrl = `https://github.com/AlphaFoxz/nuxt-content-git-pages-template.git`
-const giteeUrl = `https://gitee.com/AlphaFoxz/nuxt-content-git-pages-template.git`
+const gitUrlPrefix = `https://github.com/AlphaFoxz/create-github-pages-template`
+const giteeUrlPrefix = `https://gitee.com/AlphaFoxz/create-github-pages-template`
 
-export async function download(localPath: string, repoType: RepoType = 'git', branchName: BranchType = 'base') {
-  const repoUrl = repoType === 'git' ? gitUrl : giteeUrl
+export async function download(
+  template: TemplateType,
+  localPath: string,
+  repoType: RepoType = 'git',
+  branchName: BranchType = 'base'
+) {
+  const repoUrl = repoType === 'git' ? `${gitUrlPrefix}-${template}` : `${giteeUrlPrefix}-${template}`
   const git = simpleGit()
   let successed = true
   await git.clone(repoUrl, localPath, ['-b', branchName]).catch((e: GitError) => {
