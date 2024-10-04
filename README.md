@@ -3,5 +3,7 @@
 ## Usages
 
 ```bash
-npm create nuxt-content-git-pages
+npx create-github-pages
+# or
+pnpm create github-pages
 ```

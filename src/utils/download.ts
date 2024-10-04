@@ -12,18 +12,20 @@ export async function download(
   localPath: string,
   repoType: RepoType = 'git',
   branchName: BranchType = 'base'
-) {
+): Promise<boolean> {
   const repoUrl = repoType === 'git' ? `${gitUrlPrefix}-${template}` : `${giteeUrlPrefix}-${template}`
   const git = simpleGit()
   let successed = true
-  await git.clone(repoUrl, localPath, ['-b', branchName]).catch((e: GitError) => {
-    console.error(e)
-    successed = false
-  })
-  if (successed) {
-    await delay(1000)
-    fs.rmSync(path.join(localPath, '.git'), { recursive: true })
-  }
+  await git
+    .clone(repoUrl, localPath, ['-b', branchName])
+    .then(() => {
+      fs.rmSync(path.join(localPath, '.vscode'), { recursive: true })
+      fs.rmSync(path.join(localPath, '.git'), { recursive: true })
+    })
+    .catch((e: GitError) => {
+      console.error(e)
+      successed = false
+    })
   return successed
 }
 
