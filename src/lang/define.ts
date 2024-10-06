@@ -7,9 +7,9 @@ export type DictType = {
   'signal.scriptStarted': string
   'signal.exitWithError': string
   'signal.exitWithSuccess': string
-  'message.error.duplicateFolder': string
-  'message.error.subtitle': string
-  'message.error.userCancel': string
-  'message.error.retryDownloadTemplate': string
-  'message.error.downloadTemplate': string
+  'error.duplicateFolder{name}': string
+  'error.subtitle': string
+  'error.userCancel': string
+  'error.downloadTemplate': string
+  'warn.retryDownloadTemplate': string
 }

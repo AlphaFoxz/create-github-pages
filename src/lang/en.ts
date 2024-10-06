@@ -9,11 +9,11 @@ const enDict: DictType = {
   'signal.scriptStarted': '===== Script start =====',
   'signal.exitWithError': '===== Exit with error =====',
   'signal.exitWithSuccess': '===== Program execution succeeded =====',
-  'message.error.duplicateFolder': 'Folder or file already exists: {name}',
-  'message.error.subtitle': 'ERROR: ',
-  'message.error.userCancel': 'User canceled',
-  'message.error.retryDownloadTemplate': 'Download template failed, try to download from gitee',
-  'message.error.downloadTemplate': 'Download Failed, please check your network',
+  'error.duplicateFolder{name}': 'Folder or file already exists: {name}',
+  'error.subtitle': 'ERROR: ',
+  'error.userCancel': 'User canceled',
+  'error.downloadTemplate': 'Download Failed, please check your network',
+  'warn.retryDownloadTemplate': 'Download template failed, try to download from gitee',
 }
 
 export default enDict

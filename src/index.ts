@@ -3,7 +3,7 @@ import { getCustomAnswers } from './utils/questions'
 import { download } from './utils/download'
 import { optionProject } from './utils/option'
 import lang from './lang'
-import { onCancel } from './utils/common'
+import { onCancel, onError } from './utils/common'
 
 const t = lang.action.t
 
@@ -15,20 +15,20 @@ init().catch((e: Error) => {
 process.on('SIGINT', onCancel)
 
 async function init(): Promise<boolean> {
-  console.log(t('signal.scriptStarted'))
+  console.info(t('signal.scriptStarted'))
 
   const { template, folderName, prefix, branchName } = await getCustomAnswers()
   if (fs.existsSync(folderName)) {
-    console.error(t('message.error.duplicateFolder', { name: folderName }))
+    onError(t('error.duplicateFolder{name}', { name: folderName }))
     return false
   }
   let downloaded = await download(template, `./${folderName}`, 'git')
   if (!downloaded) {
-    console.warn(t('message.error.retryDownloadTemplate'))
+    console.warn(t('warn.retryDownloadTemplate'))
     downloaded = await download(template, `./${folderName}`, 'gitee')
   }
   if (!downloaded) {
-    console.error(t('message.error.downloadTemplate'))
+    onError(t('error.downloadTemplate'))
     return false
   }
   optionProject(folderName, prefix, branchName)
