@@ -1,13 +1,13 @@
-import zhDict from './zh'
-import enDict from './en'
-import { LangType, DictType } from './define'
+import zhContent from './zh'
+import enContent from './en'
+import { LangName, LangContent } from './define'
 import { ref } from '../utils/reactive'
 
-const currentDict = ref<DictType>(enDict)
-function t(key: keyof DictType, defaultValue?: string): string
-function t(key: keyof DictType, attr: Record<string, string | number>, defaultValue?: string): string
-function t(key: keyof DictType, attr1?: string | Record<string, string | number>, attr2?: string): string {
-  let v = currentDict.value[key]
+const currentLang = ref<LangContent>(enContent)
+function t(key: keyof LangContent, defaultValue?: string): string
+function t(key: keyof LangContent, attr: Record<string, string | number>, defaultValue?: string): string
+function t(key: keyof LangContent, attr1?: string | Record<string, string | number>, attr2?: string): string {
+  let v = currentLang.value[key]
   if (!v) {
     if (typeof attr1 === 'string') {
       v = attr1
@@ -26,18 +26,13 @@ function t(key: keyof DictType, attr1?: string | Record<string, string | number>
   return v
 }
 
-function updateLang(lang: LangType) {
+function updateLang(lang: LangName) {
   if (lang === 'zh') {
-    currentDict.value = zhDict
+    currentLang.value = zhContent
   } else if (lang === 'en') {
-    currentDict.value = enDict
+    currentLang.value = enContent
   }
 }
 
-export default {
-  state: {},
-  action: {
-    t,
-    updateLang,
-  },
-}
+;(globalThis as any).t = t
+;(globalThis as any).updateLang = updateLang

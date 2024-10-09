@@ -1,12 +1,14 @@
 import * as esbuild from 'esbuild'
 
 await esbuild.build({
-  bundle: true,
   entryPoints: ['src/index.ts'],
+  bundle: true,
   drop: ['debugger'],
-  minify: true,
   outfile: 'bin/create-github-pages.cjs',
+  sourcemap: true,
+  minify: false,
   format: 'cjs',
   platform: 'node',
-  target: 'node16',
+  target: 'node18',
+  tsconfig: 'tsconfig.json',
 })

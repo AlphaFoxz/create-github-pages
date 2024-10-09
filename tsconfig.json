@@ -1,11 +1,18 @@
 {
   "extends": "@tsconfig/node20/tsconfig.json",
-  "include": ["src/**/*", "src/*"],
+  "include": [
+    "src/*",
+    "src/**/*",
+    "__test__/*",
+    "__test__/**/*",
+  ],
   "compilerOptions": {
     "strict": false,
     "resolveJsonModule": true,
     "moduleResolution": "Bundler",
     "module": "ESNext",
-    "types": ["node"]
+    "types": [
+      "node"
+    ],
   }
 }
