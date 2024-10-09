@@ -16,7 +16,7 @@ export function parseLocalTemplateInfo(folder: string, template: TemplateType): 
     return {
       _template: template,
       name: info.name,
-      version: info.version,
+      version: info.version || '0.0.0',
     }
   }
   isNever(template)
@@ -34,7 +34,7 @@ export async function parseRemoteTemplateInfo(template: TemplateType): Promise<T
     return {
       _template: template,
       name: info.name,
-      version: info.version,
+      version: info.version || '0.0.0',
     }
   } else {
     isNever(template)

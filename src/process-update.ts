@@ -22,13 +22,13 @@ export default async function (): Promise<boolean> {
       return true
     }
     fs.mkdirSync(backupFolder)
-    fs.copyFileSync(path.join(wikiRootPath, 'content'), path.join(backupFolder, 'content'))
-    fs.rmSync(wikiRootPath, { recursive: true, force: true })
+    fs.renameSync(path.join(wikiRootPath, 'content'), path.join(backupFolder, 'content'))
+    // fs.rmSync(wikiRootPath, { recursive: true, force: true })
     await download(template, wikiRootPath)
     optionProject(folderName, prefix, branchName)
     fs.rmSync(path.join(wikiRootPath, 'content'), { recursive: true, force: true })
-    fs.copyFileSync(path.join(backupFolder, 'content'), path.join(wikiRootPath, 'content'))
-    fs.rmSync(backupFolder, { recursive: true, force: true })
+    fs.renameSync(path.join(backupFolder, 'content'), path.join(wikiRootPath, 'content'))
+    // fs.rmSync(backupFolder, { recursive: true, force: true })
   } else {
     isNever(template)
   }

@@ -10790,7 +10790,7 @@ function parseLocalTemplateInfo(folder, template) {
     return {
       _template: template,
       name: info.name,
-      version: info.version
+      version: info.version || "0.0.0"
     };
   }
   isNever(template);
@@ -10807,7 +10807,7 @@ async function parseRemoteTemplateInfo(template) {
     return {
       _template: template,
       name: info.name,
-      version: info.version
+      version: info.version || "0.0.0"
     };
   } else {
     isNever(template);
@@ -10846,13 +10846,11 @@ async function process_update_default() {
       return true;
     }
     import_node_fs6.default.mkdirSync(backupFolder);
-    import_node_fs6.default.copyFileSync(import_node_path5.default.join(wikiRootPath, "content"), import_node_path5.default.join(backupFolder, "content"));
-    import_node_fs6.default.rmSync(wikiRootPath, { recursive: true, force: true });
+    import_node_fs6.default.renameSync(import_node_path5.default.join(wikiRootPath, "content"), import_node_path5.default.join(backupFolder, "content"));
     await download(template, wikiRootPath);
     optionProject(folderName, prefix, branchName);
     import_node_fs6.default.rmSync(import_node_path5.default.join(wikiRootPath, "content"), { recursive: true, force: true });
-    import_node_fs6.default.copyFileSync(import_node_path5.default.join(backupFolder, "content"), import_node_path5.default.join(wikiRootPath, "content"));
-    import_node_fs6.default.rmSync(backupFolder, { recursive: true, force: true });
+    import_node_fs6.default.renameSync(import_node_path5.default.join(backupFolder, "content"), import_node_path5.default.join(wikiRootPath, "content"));
   } else {
     isNever(template);
   }
