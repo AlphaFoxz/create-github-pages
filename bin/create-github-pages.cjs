@@ -5407,10 +5407,10 @@ var require_supports_color = __commonJS({
         return 3;
       }
       if ("TERM_PROGRAM" in env) {
-        const version = parseInt((env.TERM_PROGRAM_VERSION || "").split(".")[0], 10);
+        const version2 = parseInt((env.TERM_PROGRAM_VERSION || "").split(".")[0], 10);
         switch (env.TERM_PROGRAM) {
           case "iTerm.app":
-            return version >= 3 ? 3 : 2;
+            return version2 >= 3 ? 3 : 2;
           case "Apple_Terminal":
             return 2;
         }
@@ -5634,10 +5634,10 @@ var require_src3 = __commonJS({
     var fs_1 = require("fs");
     var debug_1 = __importDefault(require_src2());
     var log = debug_1.default("@kwsites/file-exists");
-    function check(path5, isFile, isDirectory) {
-      log(`checking %s`, path5);
+    function check(path6, isFile, isDirectory) {
+      log(`checking %s`, path6);
       try {
-        const stat = fs_1.statSync(path5);
+        const stat = fs_1.statSync(path6);
         if (stat.isFile() && isFile) {
           log(`[OK] path represents a file`);
           return true;
@@ -5657,8 +5657,8 @@ var require_src3 = __commonJS({
         throw e;
       }
     }
-    function exists2(path5, type = exports2.READABLE) {
-      return check(path5, (type & exports2.FILE) > 0, (type & exports2.FOLDER) > 0);
+    function exists2(path6, type = exports2.READABLE) {
+      return check(path6, (type & exports2.FILE) > 0, (type & exports2.FOLDER) > 0);
     }
     exports2.exists = exists2;
     exports2.FILE = 1;
@@ -5733,6 +5733,7 @@ var zhDict = {
   "args.folderName": "\u8BF7\u8F93\u5165\u6587\u4EF6\u5939\u540D\u79F0\uFF0C\u8FD9\u5C06\u5728\u5F53\u524D\u76EE\u5F55\u521B\u5EFA\u4E00\u4E2A\u6587\u4EF6\u5939\uFF0C\u7528\u4E8E\u521D\u59CB\u5316\u6587\u6863\u9879\u76EE",
   "args.prefix": "\u8BF7\u8F93\u5165\u6B64\u9879\u76EE\u7684GitPages\u524D\u7F00\uFF08\u4ED3\u5E93\u540D\uFF09\uFF0C\u5982\uFF1A/ProjectName",
   "args.branchName": "\u8BF7\u8F93\u5165\u89E6\u53D1git\u90E8\u7F72\u7684\u5206\u652F\u540D\u79F0",
+  "info.templateIsAlreadyUpdated": "\u6A21\u677F\u5DF2\u7ECF\u662F\u6700\u65B0\u7248\u672C\u7684\u4E86",
   "error.duplicateFolder{name}": "\u540C\u540D\u6587\u4EF6\u5939\u6216\u6587\u4EF6\u5DF2\u5B58\u5728\uFF1A{name}",
   "error.invalidFolder{name}": "\u65E0\u6548\u7684\u6587\u4EF6\u5939\uFF1A{name}",
   "error.validVersionNotDetected": "\u672A\u68C0\u6D4B\u5230\u6709\u6548\u7248\u672C",
@@ -5740,8 +5741,8 @@ var zhDict = {
   "error.userCancel": "\u7528\u6237\u7EC8\u6B62\u4E86\u811A\u672C\u6267\u884C",
   "error.downloadTemplate": "\u4E0B\u8F7D\u6A21\u677F\u5931\u8D25\uFF0C\u8BF7\u68C0\u67E5\u60A8\u7684\u7F51\u7EDC",
   "error.networkError": "\u7F51\u7EDC\u9519\u8BEF",
-  "warn.retryDownloadTemplate": "\u4E0B\u8F7D\u6A21\u677F\u5931\u8D25\uFF0C\u5C1D\u8BD5\u4ECEgitee\u4E0B\u8F7D",
-  "warn.githubConnection": "Github\u8FDE\u63A5\u5931\u8D25\uFF0C\u8BF7\u68C0\u67E5\u60A8\u7684\u7F51\u7EDC"
+  "error.networkError{info}": "\u7F51\u7EDC\u9519\u8BEF\uFF1A{info}",
+  "warn.retryDownloadTemplate": "\u4E0B\u8F7D\u6A21\u677F\u5931\u8D25\uFF0C\u5C1D\u8BD5\u4ECEgitee\u4E0B\u8F7D"
 };
 var zh_default = zhDict;
 
@@ -5757,6 +5758,7 @@ var enDict = {
   "args.folderName": "Input folder name, this will create a folder in the current directory to initialize the md project",
   "args.prefix": "Input this project GitPages prefix (repository name), e.g.: /ProjectName",
   "args.branchName": "Input branch name witch will trigger git deploy action",
+  "info.templateIsAlreadyUpdated": "The template is already updated to the latest version",
   "error.duplicateFolder{name}": "Folder or file already exists: {name}",
   "error.invalidFolder{name}": "Invalid folder: {name}",
   "error.validVersionNotDetected": "Valid version not detected",
@@ -5764,8 +5766,8 @@ var enDict = {
   "error.userCancel": "User canceled",
   "error.downloadTemplate": "Download Failed, please check your network",
   "error.networkError": "Network error",
-  "warn.retryDownloadTemplate": "Download template failed, try to download from gitee",
-  "warn.githubConnection": "Github connection failed, please check your network"
+  "error.networkError{info}": "Network error: {info}",
+  "warn.retryDownloadTemplate": "Download template failed, try to download from gitee"
 };
 var en_default = enDict;
 
@@ -5831,18 +5833,99 @@ function onCancel() {
 function onError(str) {
   throw new Error(str);
 }
-function isValidFolder(path5) {
-  return import_node_fs.default.existsSync(path5) && import_node_fs.default.lstatSync(path5).isDirectory();
+function isValidFolder(path6) {
+  return import_node_fs.default.existsSync(path6) && import_node_fs.default.lstatSync(path6).isDirectory();
 }
-function isValidVersion(version) {
+function toValidFileName(fileName, defVal) {
+  const illegalCharsRegex = /[<>:"/\\|?*\x00-\x1F]/g;
+  let validName = fileName.replace(illegalCharsRegex, "");
+  validName = validName.replace(/[. ]+$/, "");
+  if (validName.length === 0) {
+    return defVal;
+  }
+  return validName;
+}
+function isValidVersion(version2) {
   return /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][\da-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][\da-zA-Z-]*))*))?(?:\+([\da-zA-Z-]+(?:\.[\da-zA-Z-]+)*))?$/.test(
-    version
+    version2
   );
+}
+function version(version1) {
+  return {
+    isValid: isValidVersion(version1),
+    isOlderThan(version2) {
+      return compareVersions(version1, version2) === -1;
+    },
+    isNewerThan(version2) {
+      return compareVersions(version1, version2) === 1;
+    },
+    isEqualTo(version2) {
+      return compareVersions(version1, version2) === 0;
+    }
+  };
+}
+function compareVersions(version1, version2) {
+  const parseVersion = (version3) => {
+    const [main, preRelease] = version3.split("-");
+    const [major, minor, patch] = main.split(".").map(Number);
+    const pre = preRelease ? preRelease.split(".") : [];
+    return { major, minor, patch, pre };
+  };
+  const isPreRelease = (part) => /\D/.test(part);
+  const comparePart = (a, b) => a > b ? 1 : a < b ? -1 : 0;
+  const comparePreRelease = (pre1, pre2) => {
+    for (let i = 0; i < Math.max(pre1.length, pre2.length); i++) {
+      if (i >= pre1.length) return -1;
+      if (i >= pre2.length) return 1;
+      const isNum1 = /^\d+$/.test(pre1[i]);
+      const isNum2 = /^\d+$/.test(pre2[i]);
+      if (isNum1 && isNum2) {
+        const numCompare = comparePart(+pre1[i], +pre2[i]);
+        if (numCompare !== 0) return numCompare;
+      } else if (!isNum1 && isNum2) {
+        return 1;
+      } else if (isNum1 && !isNum2) {
+        return -1;
+      } else {
+        const strCompare = comparePart(pre1[i], pre2[i]);
+        if (strCompare !== 0) return strCompare;
+      }
+    }
+    return 0;
+  };
+  const v1 = parseVersion(version1);
+  const v2 = parseVersion(version2);
+  const mainCompare = comparePart(v1.major, v2.major) || comparePart(v1.minor, v2.minor) || comparePart(v1.patch, v2.patch);
+  if (mainCompare !== 0) return mainCompare;
+  if (!v1.pre.length && !v2.pre.length) return 0;
+  if (!v1.pre.length) return 1;
+  if (!v2.pre.length) return -1;
+  return comparePreRelease(v1.pre, v2.pre);
 }
 function isNever(_) {
 }
 function getCurrentPath() {
   return process.cwd() || __dirname;
+}
+function strTemplate(template) {
+  let api = {
+    template,
+    map: {},
+    set(key, value) {
+      this.map[key] = value;
+      return this;
+    },
+    toString() {
+      let result = this.template;
+      Object.keys(this.map).forEach((key) => {
+        const value = this.map[key];
+        const regex = new RegExp(`\\{\\{${key}\\}\\}`, "g");
+        result = result.replace(regex, value);
+      });
+      return result;
+    }
+  };
+  return api;
 }
 
 // src/stores/args.ts
@@ -5905,10 +5988,7 @@ async function configCreateArgs() {
         message: t("args.folderName"),
         initial: defaultProjectName,
         onState: (state) => {
-          if (!state.value || /(\s|\/|\\)+/.test(state.value)) {
-            return state.value;
-          }
-          return defaultProjectName;
+          return toValidFileName(state.value, defaultProjectName);
         }
       },
       {
@@ -5958,10 +6038,7 @@ async function configUpdateArgs() {
         message: t("args.folderName"),
         initial: defaultProjectName,
         onState: (state) => {
-          if (!state.value || /(\s|\/|\\)+/.test(state.value)) {
-            return state.value;
-          }
-          return defaultProjectName;
+          return toValidFileName(state.value, defaultProjectName);
         }
       },
       {
@@ -6104,8 +6181,8 @@ function pathspec(...paths) {
   cache.set(key, paths);
   return key;
 }
-function isPathSpec(path5) {
-  return path5 instanceof String && cache.has(path5);
+function isPathSpec(path6) {
+  return path6 instanceof String && cache.has(path6);
 }
 function toPaths(pathSpec) {
   return cache.get(pathSpec) || [];
@@ -6136,9 +6213,9 @@ var init_git_response_error = __esm({
     "use strict";
     init_git_error();
     GitResponseError = class extends GitError {
-      constructor(git, message) {
-        super(void 0, message || String(git));
-        this.git = git;
+      constructor(git2, message) {
+        super(void 0, message || String(git2));
+        this.git = git2;
       }
     };
   }
@@ -6191,8 +6268,8 @@ function toLinesWithContent(input = "", trimmed2 = true, separator = "\n") {
 function forEachLineWithContent(input, callback) {
   return toLinesWithContent(input, true).map((line) => callback(line));
 }
-function folderExists(path5) {
-  return (0, import_file_exists.exists)(path5, import_file_exists.FOLDER);
+function folderExists(path6) {
+  return (0, import_file_exists.exists)(path6, import_file_exists.FOLDER);
 }
 function append(target, item) {
   if (Array.isArray(target)) {
@@ -6583,8 +6660,8 @@ function checkIsRepoRootTask() {
     commands,
     format: "utf-8",
     onError: onError2,
-    parser(path5) {
-      return /^\.(git)?$/.test(path5.trim());
+    parser(path6) {
+      return /^\.(git)?$/.test(path6.trim());
     }
   };
 }
@@ -7018,11 +7095,11 @@ function parseGrep(grep) {
   const paths = /* @__PURE__ */ new Set();
   const results = {};
   forEachLineWithContent(grep, (input) => {
-    const [path5, line, preview] = input.split(NULL);
-    paths.add(path5);
-    (results[path5] = results[path5] || []).push({
+    const [path6, line, preview] = input.split(NULL);
+    paths.add(path6);
+    (results[path6] = results[path6] || []).push({
       line: asNumber(line),
-      path: path5,
+      path: path6,
       preview
     });
   });
@@ -7785,14 +7862,14 @@ var init_hash_object = __esm({
     init_task();
   }
 });
-function parseInit(bare, path5, text) {
+function parseInit(bare, path6, text) {
   const response = String(text).trim();
   let result;
   if (result = initResponseRegex.exec(response)) {
-    return new InitSummary(bare, path5, false, result[1]);
+    return new InitSummary(bare, path6, false, result[1]);
   }
   if (result = reInitResponseRegex.exec(response)) {
-    return new InitSummary(bare, path5, true, result[1]);
+    return new InitSummary(bare, path6, true, result[1]);
   }
   let gitDir = "";
   const tokens = response.split(" ");
@@ -7803,7 +7880,7 @@ function parseInit(bare, path5, text) {
       break;
     }
   }
-  return new InitSummary(bare, path5, /^re/i.test(response), gitDir);
+  return new InitSummary(bare, path6, /^re/i.test(response), gitDir);
 }
 var InitSummary;
 var initResponseRegex;
@@ -7812,9 +7889,9 @@ var init_InitSummary = __esm({
   "src/lib/responses/InitSummary.ts"() {
     "use strict";
     InitSummary = class {
-      constructor(bare, path5, existing, gitDir) {
+      constructor(bare, path6, existing, gitDir) {
         this.bare = bare;
-        this.path = path5;
+        this.path = path6;
         this.existing = existing;
         this.gitDir = gitDir;
       }
@@ -7826,7 +7903,7 @@ var init_InitSummary = __esm({
 function hasBareCommand(command) {
   return command.includes(bareCommand);
 }
-function initTask(bare = false, path5, customArgs) {
+function initTask(bare = false, path6, customArgs) {
   const commands = ["init", ...customArgs];
   if (bare && !hasBareCommand(commands)) {
     commands.splice(1, 0, bareCommand);
@@ -7835,7 +7912,7 @@ function initTask(bare = false, path5, customArgs) {
     commands,
     format: "utf-8",
     parser(text) {
-      return parseInit(commands.includes("--bare"), path5, text);
+      return parseInit(commands.includes("--bare"), path6, text);
     }
   };
 }
@@ -8647,12 +8724,12 @@ var init_FileStatusSummary = __esm({
     "use strict";
     fromPathRegex = /^(.+) -> (.+)$/;
     FileStatusSummary = class {
-      constructor(path5, index, working_dir) {
-        this.path = path5;
+      constructor(path6, index, working_dir) {
+        this.path = path6;
         this.index = index;
         this.working_dir = working_dir;
         if ("R" === index + working_dir) {
-          const detail = fromPathRegex.exec(path5) || [null, path5, path5];
+          const detail = fromPathRegex.exec(path6) || [null, path6, path6];
           this.from = detail[1] || "";
           this.path = detail[2] || "";
         }
@@ -8683,14 +8760,14 @@ function splitLine(result, lineStr) {
     default:
       return;
   }
-  function data(index, workingDir, path5) {
+  function data(index, workingDir, path6) {
     const raw = `${index}${workingDir}`;
     const handler = parsers6.get(raw);
     if (handler) {
-      handler(result, path5);
+      handler(result, path6);
     }
     if (raw !== "##" && raw !== "!!") {
-      result.files.push(new FileStatusSummary(path5.replace(/\0.+$/, ""), index, workingDir));
+      result.files.push(new FileStatusSummary(path6.replace(/\0.+$/, ""), index, workingDir));
     }
   }
 }
@@ -9002,9 +9079,9 @@ var init_simple_git_api = __esm({
           next
         );
       }
-      hashObject(path5, write) {
+      hashObject(path6, write) {
         return this._runTask(
-          hashObjectTask(path5, write === true),
+          hashObjectTask(path6, write === true),
           trailingFunctionArgument(arguments)
         );
       }
@@ -9658,8 +9735,8 @@ __export(sub_module_exports, {
   subModuleTask: () => subModuleTask,
   updateSubModuleTask: () => updateSubModuleTask
 });
-function addSubModuleTask(repo, path5) {
-  return subModuleTask(["add", repo, path5]);
+function addSubModuleTask(repo, path6) {
+  return subModuleTask(["add", repo, path6]);
 }
 function initSubModuleTask(customArgs) {
   return subModuleTask(["init", ...customArgs]);
@@ -9878,10 +9955,10 @@ var require_git = __commonJS2({
       return this._runTask(moveTask2(from, to), trailingFunctionArgument2(arguments));
     };
     Git2.prototype.checkoutLatestTag = function(then) {
-      var git = this;
+      var git2 = this;
       return this.pull(function() {
-        git.tags(function(err, tags) {
-          git.checkout(tags.latest, then);
+        git2.tags(function(err, tags) {
+          git2.checkout(tags.latest, then);
         });
       });
     };
@@ -9989,8 +10066,8 @@ var require_git = __commonJS2({
       }
       return this._runTask(straightThroughStringTask2(command, this._trimmed), next);
     };
-    Git2.prototype.submoduleAdd = function(repo, path5, then) {
-      return this._runTask(addSubModuleTask2(repo, path5), trailingFunctionArgument2(arguments));
+    Git2.prototype.submoduleAdd = function(repo, path6, then) {
+      return this._runTask(addSubModuleTask2(repo, path6), trailingFunctionArgument2(arguments));
     };
     Git2.prototype.submoduleUpdate = function(args, then) {
       return this._runTask(
@@ -10585,20 +10662,27 @@ init_git_response_error();
 var simpleGit = gitInstanceFactory;
 
 // src/utils/download.ts
-var gitUrlPrefix = `https://github.com/AlphaFoxz/create-github-pages-template`;
-var giteeUrlPrefix = `https://gitee.com/AlphaFoxz/create-github-pages-template`;
-async function download(template, localPath, repoType = "git", branchName = "base") {
-  const repoUrl = repoType === "git" ? `${gitUrlPrefix}-${template}` : `${giteeUrlPrefix}-${template}`;
-  const git = simpleGit();
-  let successed = true;
-  await git.clone(repoUrl, localPath, ["-b", branchName]).then(() => {
-    import_node_fs2.default.rmSync(import_node_path2.default.join(localPath, ".vscode"), { recursive: true });
-    import_node_fs2.default.rmSync(import_node_path2.default.join(localPath, ".git"), { recursive: true });
-  }).catch((e) => {
+var git = simpleGit();
+async function download(template, localPath, branchName = "base") {
+  tryClone(template, localPath, branchName, [
+    "https://gitee.com/AlphaFoxz/create-github-pages-template-{{template}}",
+    "https://github.com/AlphaFoxz/create-github-pages-template-{{template}}"
+  ]);
+  import_node_fs2.default.rmSync(import_node_path2.default.join(localPath, ".vscode"), { recursive: true });
+  import_node_fs2.default.rmSync(import_node_path2.default.join(localPath, ".git"), { recursive: true });
+}
+async function tryClone(template, localPath, branchName, tryList) {
+  if (tryList.length === 0) {
+    onError(t("error.downloadTemplate"));
+  }
+  const repoUrl = strTemplate(tryList.pop()).set("template", template).toString();
+  try {
+    await git.clone(repoUrl, localPath, ["-b", branchName]);
+  } catch (e) {
     console.error(e);
-    successed = false;
-  });
-  return successed;
+    console.warn(t("warn.retryDownloadTemplate"));
+    await tryClone(template, localPath, branchName, tryList);
+  }
 }
 
 // src/utils/option.ts
@@ -10681,19 +10765,14 @@ async function process_create_default() {
     onError(t("error.duplicateFolder{name}", { name: folderName }));
     return false;
   }
-  let downloaded = await download(template, `./${folderName}`, "git");
-  if (!downloaded) {
-    console.warn(t("warn.retryDownloadTemplate"));
-    downloaded = await download(template, `./${folderName}`, "gitee");
-  }
-  if (!downloaded) {
-    onError(t("error.downloadTemplate"));
-    return false;
-  }
+  await download(template, `./${folderName}`);
   optionProject(folderName, prefix, branchName);
-  console.info(t("signal.exitWithSuccess"));
   return true;
 }
+
+// src/process-update.ts
+var import_node_fs6 = __toESM(require("node:fs"), 1);
+var import_node_path5 = __toESM(require("node:path"), 1);
 
 // src/utils/template.ts
 var import_node_fs5 = __toESM(require("node:fs"), 1);
@@ -10716,14 +10795,66 @@ function parseLocalTemplateInfo(folder, template) {
   }
   isNever(template);
 }
+async function parseRemoteTemplateInfo(template) {
+  if (template === "nuxt_content") {
+    const fetchResult = await tryFetchRemoteTemplateInfo(template, "package.json", [
+      "https://raw.githubusercontent.com/AlphaFoxz/create-github-pages-template-{{template}}/base/{{targetFile}}"
+    ]);
+    const info = JSON.parse(fetchResult);
+    if (!isValidVersion(info.version)) {
+      onError(t("error.validVersionNotDetected"));
+    }
+    return {
+      _template: template,
+      name: info.name,
+      version: info.version
+    };
+  } else {
+    isNever(template);
+  }
+}
+async function tryFetchRemoteTemplateInfo(template, targetFile, tryList) {
+  if (tryList.length === 0) {
+    onError(t("error.networkError"));
+  }
+  const remoteUrl = strTemplate(tryList.pop()).set("template", template).set("targetFile", targetFile).toString();
+  const response = await fetch(remoteUrl);
+  if (!response.ok) {
+    console.warn(t("error.networkError{info}", { info: JSON.stringify(response) }));
+    return await tryFetchRemoteTemplateInfo(template, targetFile, tryList);
+  }
+  try {
+    return await response.text();
+  } catch (e) {
+    return await tryFetchRemoteTemplateInfo(template, targetFile, tryList);
+  }
+}
 
 // src/process-update.ts
 var argsStore2 = useArgs();
 async function process_update_default() {
   await argsStore2.action.init();
   const { folderName, template, prefix, branchName } = argsStore2.state.updateArgs.value;
-  let localTemplateInfo = parseLocalTemplateInfo(`./${folderName}`, template);
+  const wikiRootPath = import_node_path5.default.join(".", folderName);
+  const localTemplateInfo = parseLocalTemplateInfo(wikiRootPath, template);
+  const remoteTemplateInfo = parseRemoteTemplateInfo(template);
+  const backupFolder = wikiRootPath + "__" + (/* @__PURE__ */ new Date()).getTime().toString();
   if (template === "nuxt_content") {
+    const localVersion = version(localTemplateInfo.version);
+    if (!localVersion.isOlderThan((await remoteTemplateInfo).version)) {
+      console.info(t("info.templateIsAlreadyUpdated"));
+      return true;
+    }
+    import_node_fs6.default.mkdirSync(backupFolder);
+    import_node_fs6.default.copyFileSync(import_node_path5.default.join(wikiRootPath, "content"), import_node_path5.default.join(backupFolder, "content"));
+    import_node_fs6.default.rmSync(wikiRootPath, { recursive: true, force: true });
+    await download(template, wikiRootPath);
+    optionProject(folderName, prefix, branchName);
+    import_node_fs6.default.rmSync(import_node_path5.default.join(wikiRootPath, "content"), { recursive: true, force: true });
+    import_node_fs6.default.copyFileSync(import_node_path5.default.join(backupFolder, "content"), import_node_path5.default.join(wikiRootPath, "content"));
+    import_node_fs6.default.rmSync(backupFolder, { recursive: true, force: true });
+  } else {
+    isNever(template);
   }
   return true;
 }
@@ -10745,5 +10876,6 @@ async function init2() {
   } else {
     isNever(argsStore3.state.currerntOperation.value);
   }
+  console.info(t("signal.exitWithSuccess"));
 }
 //# sourceMappingURL=create-github-pages.cjs.map
