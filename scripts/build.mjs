@@ -6,7 +6,7 @@ await esbuild.build({
   drop: ['debugger'],
   outfile: 'bin/create-github-pages.cjs',
   sourcemap: true,
-  minify: false,
+  minify: true,
   format: 'cjs',
   platform: 'node',
   target: 'node18',

@@ -16,7 +16,7 @@
   },
   "scripts": {
     "dev": "pnpm build && node ./bin/create-github-pages.cjs",
-    "test": "jest",
+    "test": "pnpm build && jest",
     "build": "zx ./scripts/build.mjs"
   },
   "keywords": [],
