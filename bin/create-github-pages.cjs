@@ -5827,6 +5827,7 @@ var import_prompts = __toESM(require_prompts3(), 1);
 
 // src/utils/common.ts
 var import_node_fs = __toESM(require("node:fs"), 1);
+var import_node_path = __toESM(require("node:path"), 1);
 function onCancel() {
   throw Error(t("error.userCancel"));
 }
@@ -5835,6 +5836,31 @@ function onError(str) {
 }
 function isValidFolder(path6) {
   return import_node_fs.default.existsSync(path6) && import_node_fs.default.lstatSync(path6).isDirectory();
+}
+function isValidFilePath(path6) {
+  return import_node_fs.default.existsSync(path6) && import_node_fs.default.lstatSync(path6).isFile();
+}
+function isEmptyFolder(path6) {
+  return import_node_fs.default.readdirSync(path6).length === 0;
+}
+function cleanFolder(path6, delSelf = false) {
+  if (isValidFolder(path6)) {
+    import_node_fs.default.readdirSync(path6).forEach((file) => {
+      const curPath = import_node_path.default.join(path6, file);
+      if (import_node_fs.default.lstatSync(curPath).isDirectory()) {
+        cleanFolder(curPath, true);
+      } else {
+        import_node_fs.default.unlinkSync(curPath);
+      }
+    });
+    if (delSelf) {
+      import_node_fs.default.rmdirSync(path6);
+    }
+  } else if (isValidFilePath) {
+    import_node_fs.default.unlinkSync(path6);
+  } else {
+    console.warn(t("error.invalidFolder{name}", { name: path6 }));
+  }
 }
 function toValidFileName(fileName, defVal) {
   const illegalCharsRegex = /[<>:"/\\|?*\x00-\x1F]/g;
@@ -5929,12 +5955,12 @@ function strTemplate(template) {
 }
 
 // src/stores/args.ts
-var import_node_path = __toESM(require("node:path"), 1);
+var import_node_path2 = __toESM(require("node:path"), 1);
 var isReady = ref(false);
 var currerntOperation = ref("create");
 var createArgs = ref({});
 var updateArgs = ref({});
-var defaultPrefix = import_node_path.default.basename(getCurrentPath());
+var defaultPrefix = import_node_path2.default.basename(getCurrentPath());
 var defaultProjectName = ".github-pages";
 var defaultBranchName = "main";
 async function selectLang() {
@@ -6106,7 +6132,7 @@ function useArgs() {
 var import_node_fs4 = __toESM(require("node:fs"), 1);
 
 // src/utils/download.ts
-var import_node_path2 = __toESM(require("node:path"), 1);
+var import_node_path3 = __toESM(require("node:path"), 1);
 var import_node_fs2 = __toESM(require("node:fs"), 1);
 
 // node_modules/.pnpm/simple-git@3.25.0/node_modules/simple-git/dist/esm/index.js
@@ -10664,12 +10690,12 @@ var simpleGit = gitInstanceFactory;
 // src/utils/download.ts
 var git = simpleGit();
 async function download(template, localPath, branchName = "base") {
-  tryClone(template, localPath, branchName, [
+  await tryClone(template, localPath, branchName, [
     "https://gitee.com/AlphaFoxz/create-github-pages-template-{{template}}",
     "https://github.com/AlphaFoxz/create-github-pages-template-{{template}}"
   ]);
-  import_node_fs2.default.rmSync(import_node_path2.default.join(localPath, ".vscode"), { recursive: true });
-  import_node_fs2.default.rmSync(import_node_path2.default.join(localPath, ".git"), { recursive: true });
+  import_node_fs2.default.rmSync(import_node_path3.default.join(localPath, ".vscode"), { recursive: true, force: true });
+  import_node_fs2.default.rmSync(import_node_path3.default.join(localPath, ".git"), { recursive: true, force: true });
 }
 async function tryClone(template, localPath, branchName, tryList) {
   if (tryList.length === 0) {
@@ -10687,7 +10713,7 @@ async function tryClone(template, localPath, branchName, tryList) {
 
 // src/utils/option.ts
 var import_node_fs3 = __toESM(require("node:fs"), 1);
-var import_node_path3 = __toESM(require("node:path"), 1);
+var import_node_path4 = __toESM(require("node:path"), 1);
 function optionProject(projectName, prefix, branchName) {
   if (prefix && !prefix.startsWith("/")) {
     prefix = "/" + prefix;
@@ -10747,10 +10773,10 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 `;
-  const actionDirPath = import_node_path3.default.join(repoRootPath, ".github", "workflows");
+  const actionDirPath = import_node_path4.default.join(repoRootPath, ".github", "workflows");
   import_node_fs3.default.mkdirSync(actionDirPath, { recursive: true });
-  const actionFilePath = import_node_path3.default.join(actionDirPath, "github-pages.yml");
-  import_node_fs3.default.writeFileSync(actionFilePath, template, "utf-8");
+  const actionFilePath = import_node_path4.default.join(actionDirPath, "github-pages.yml");
+  import_node_fs3.default.writeFileSync(actionFilePath, template, { encoding: "utf8", flush: true });
 }
 function checkIsWrappedWiki() {
   return import_node_fs3.default.existsSync("./.git") || import_node_fs3.default.existsSync("./package.json");
@@ -10761,28 +10787,29 @@ var argsStore = useArgs();
 async function process_create_default() {
   await argsStore.action.init();
   const { folderName, template, prefix, branchName } = argsStore.state.createArgs.value;
-  if (import_node_fs4.default.existsSync(folderName)) {
+  if (import_node_fs4.default.existsSync(folderName) && !isValidFolder(folderName)) {
+    onError(t("error.invalidFolder{name}", { name: folderName }));
+  }
+  if (import_node_fs4.default.existsSync(folderName) && !isEmptyFolder(folderName)) {
     onError(t("error.duplicateFolder{name}", { name: folderName }));
-    return false;
   }
   await download(template, `./${folderName}`);
   optionProject(folderName, prefix, branchName);
-  return true;
 }
 
 // src/process-update.ts
 var import_node_fs6 = __toESM(require("node:fs"), 1);
-var import_node_path5 = __toESM(require("node:path"), 1);
+var import_node_path6 = __toESM(require("node:path"), 1);
 
 // src/utils/template.ts
 var import_node_fs5 = __toESM(require("node:fs"), 1);
-var import_node_path4 = __toESM(require("node:path"), 1);
+var import_node_path5 = __toESM(require("node:path"), 1);
 function parseLocalTemplateInfo(folder, template) {
   if (!isValidFolder(folder)) {
     onError(t("error.invalidFolder{name}", { name: folder }));
   }
   if (template === "nuxt_content") {
-    const content = import_node_fs5.default.readFileSync(import_node_path4.default.join(folder, "package.json"), "utf8");
+    const content = import_node_fs5.default.readFileSync(import_node_path5.default.join(folder, "package.json"), { encoding: "utf8", flag: "r" });
     const info = JSON.parse(content);
     if (!isValidVersion(info.version)) {
       onError(t("error.validVersionNotDetected"));
@@ -10835,26 +10862,28 @@ var argsStore2 = useArgs();
 async function process_update_default() {
   await argsStore2.action.init();
   const { folderName, template, prefix, branchName } = argsStore2.state.updateArgs.value;
-  const wikiRootPath = import_node_path5.default.join(".", folderName);
+  const wikiRootPath = import_node_path6.default.join(".", folderName);
   const localTemplateInfo = parseLocalTemplateInfo(wikiRootPath, template);
-  const remoteTemplateInfo = parseRemoteTemplateInfo(template);
+  const remoteTemplateInfo = await parseRemoteTemplateInfo(template);
   const backupFolder = wikiRootPath + "__" + (/* @__PURE__ */ new Date()).getTime().toString();
+  console.info(`local version: `, localTemplateInfo.version);
+  console.info(`remote version: `, remoteTemplateInfo.version);
   if (template === "nuxt_content") {
     const localVersion = version(localTemplateInfo.version);
-    if (!localVersion.isOlderThan((await remoteTemplateInfo).version)) {
+    if (!localVersion.isOlderThan(remoteTemplateInfo.version)) {
       console.info(t("info.templateIsAlreadyUpdated"));
-      return true;
     }
-    import_node_fs6.default.mkdirSync(backupFolder);
-    import_node_fs6.default.renameSync(import_node_path5.default.join(wikiRootPath, "content"), import_node_path5.default.join(backupFolder, "content"));
+    import_node_fs6.default.mkdirSync(backupFolder, { recursive: true });
+    import_node_fs6.default.renameSync(import_node_path6.default.join(wikiRootPath, "content"), import_node_path6.default.join(backupFolder, "content"));
+    cleanFolder(wikiRootPath);
     await download(template, wikiRootPath);
     optionProject(folderName, prefix, branchName);
-    import_node_fs6.default.rmSync(import_node_path5.default.join(wikiRootPath, "content"), { recursive: true, force: true });
-    import_node_fs6.default.renameSync(import_node_path5.default.join(backupFolder, "content"), import_node_path5.default.join(wikiRootPath, "content"));
+    cleanFolder(import_node_path6.default.join(wikiRootPath, "content"), true);
+    import_node_fs6.default.renameSync(import_node_path6.default.join(backupFolder, "content"), import_node_path6.default.join(wikiRootPath, "content"));
+    import_node_fs6.default.rmSync(backupFolder, { recursive: true, force: true });
   } else {
     isNever(template);
   }
-  return true;
 }
 
 // src/index.ts
@@ -10868,9 +10897,9 @@ async function init2() {
   const argsStore3 = useArgs();
   await argsStore3.action.init();
   if (argsStore3.state.currerntOperation.value === "create") {
-    return await process_create_default();
+    await process_create_default();
   } else if (argsStore3.state.currerntOperation.value === "update") {
-    return await process_update_default();
+    await process_update_default();
   } else {
     isNever(argsStore3.state.currerntOperation.value);
   }

@@ -8,7 +8,7 @@ export function parseLocalTemplateInfo(folder: string, template: TemplateType): 
     onError(t('error.invalidFolder{name}', { name: folder }))
   }
   if (template === 'nuxt_content') {
-    const content = fs.readFileSync(path.join(folder, 'package.json'), 'utf8')
+    const content = fs.readFileSync(path.join(folder, 'package.json'), { encoding: 'utf8', flag: 'r' })
     const info = JSON.parse(content)
     if (!isValidVersion(info.version)) {
       onError(t('error.validVersionNotDetected'))

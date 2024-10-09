@@ -63,7 +63,7 @@ jobs:
   const actionDirPath = path.join(repoRootPath, '.github', 'workflows')
   fs.mkdirSync(actionDirPath, { recursive: true })
   const actionFilePath = path.join(actionDirPath, 'github-pages.yml')
-  fs.writeFileSync(actionFilePath, template, 'utf-8')
+  fs.writeFileSync(actionFilePath, template, { encoding: 'utf8', flush: true })
 }
 
 function checkIsWrappedWiki(): boolean {

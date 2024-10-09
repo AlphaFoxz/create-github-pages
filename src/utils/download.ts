@@ -7,12 +7,12 @@ import { onError, strTemplate } from './common'
 const git = simpleGit()
 
 export async function download(template: TemplateType, localPath: string, branchName: BranchType = 'base') {
-  tryClone(template, localPath, branchName, [
+  await tryClone(template, localPath, branchName, [
     'https://gitee.com/AlphaFoxz/create-github-pages-template-{{template}}',
     'https://github.com/AlphaFoxz/create-github-pages-template-{{template}}',
   ])
-  fs.rmSync(path.join(localPath, '.vscode'), { recursive: true })
-  fs.rmSync(path.join(localPath, '.git'), { recursive: true })
+  fs.rmSync(path.join(localPath, '.vscode'), { recursive: true, force: true })
+  fs.rmSync(path.join(localPath, '.git'), { recursive: true, force: true })
 }
 
 async function tryClone(template: string, localPath: string, branchName: string, tryList: string[]) {

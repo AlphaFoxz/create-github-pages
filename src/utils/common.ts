@@ -1,4 +1,9 @@
 import fs from 'node:fs'
+import nodePath from 'node:path'
+
+export async function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
 
 export function onCancel() {
   throw Error(t('error.userCancel'))
@@ -18,6 +23,30 @@ export function isValidFolder(path: string) {
 
 export function isValidFilePath(path: string) {
   return fs.existsSync(path) && fs.lstatSync(path).isFile()
+}
+
+export function isEmptyFolder(path: string) {
+  return fs.readdirSync(path).length === 0
+}
+
+export function cleanFolder(path: string, delSelf = false) {
+  if (isValidFolder(path)) {
+    fs.readdirSync(path).forEach((file) => {
+      const curPath = nodePath.join(path, file)
+      if (fs.lstatSync(curPath).isDirectory()) {
+        cleanFolder(curPath, true)
+      } else {
+        fs.unlinkSync(curPath)
+      }
+    })
+    if (delSelf) {
+      fs.rmdirSync(path)
+    }
+  } else if (isValidFilePath) {
+    fs.unlinkSync(path)
+  } else {
+    console.warn(t('error.invalidFolder{name}', { name: path }))
+  }
 }
 
 export function toValidFileName(fileName: string, defVal: string): string {

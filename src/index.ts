@@ -11,15 +11,15 @@ init().catch((e: Error) => {
 
 process.on('SIGINT', onCancel)
 
-async function init(): Promise<boolean> {
+async function init() {
   console.info(t('signal.scriptStarted'))
 
   const argsStore = useArgs()
   await argsStore.action.init()
   if (argsStore.state.currerntOperation.value === 'create') {
-    return await createProcess()
+    await createProcess()
   } else if (argsStore.state.currerntOperation.value === 'update') {
-    return await updateProcess()
+    await updateProcess()
   } else {
     isNever(argsStore.state.currerntOperation.value)
   }
