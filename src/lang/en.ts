@@ -15,7 +15,6 @@ const enDict: LangContent = {
   'info.templateIsAlreadyUpdated': 'The template is already updated to the latest version',
   'error.duplicateFolder{name}': 'Folder or file already exists: {name}',
   'error.invalidFolder{name}': 'Invalid folder: {name}',
-  'error.validVersionNotDetected': 'Valid version not detected',
   'error.subtitle': 'ERROR: ',
   'error.userCancel': 'User canceled',
   'error.downloadTemplate': 'Download Failed, please check your network',

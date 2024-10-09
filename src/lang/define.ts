@@ -13,7 +13,6 @@ export type LangContent = {
   'info.templateIsAlreadyUpdated': string
   'error.duplicateFolder{name}': string
   'error.invalidFolder{name}': string
-  'error.validVersionNotDetected': string
   'error.subtitle': string
   'error.userCancel': string
   'error.downloadTemplate': string

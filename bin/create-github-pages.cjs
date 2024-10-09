@@ -5736,7 +5736,6 @@ var zhDict = {
   "info.templateIsAlreadyUpdated": "\u6A21\u677F\u5DF2\u7ECF\u662F\u6700\u65B0\u7248\u672C\u7684\u4E86",
   "error.duplicateFolder{name}": "\u540C\u540D\u6587\u4EF6\u5939\u6216\u6587\u4EF6\u5DF2\u5B58\u5728\uFF1A{name}",
   "error.invalidFolder{name}": "\u65E0\u6548\u7684\u6587\u4EF6\u5939\uFF1A{name}",
-  "error.validVersionNotDetected": "\u672A\u68C0\u6D4B\u5230\u6709\u6548\u7248\u672C",
   "error.subtitle": "\u9519\u8BEF: ",
   "error.userCancel": "\u7528\u6237\u7EC8\u6B62\u4E86\u811A\u672C\u6267\u884C",
   "error.downloadTemplate": "\u4E0B\u8F7D\u6A21\u677F\u5931\u8D25\uFF0C\u8BF7\u68C0\u67E5\u60A8\u7684\u7F51\u7EDC",
@@ -5761,7 +5760,6 @@ var enDict = {
   "info.templateIsAlreadyUpdated": "The template is already updated to the latest version",
   "error.duplicateFolder{name}": "Folder or file already exists: {name}",
   "error.invalidFolder{name}": "Invalid folder: {name}",
-  "error.validVersionNotDetected": "Valid version not detected",
   "error.subtitle": "ERROR: ",
   "error.userCancel": "User canceled",
   "error.downloadTemplate": "Download Failed, please check your network",
@@ -10811,9 +10809,6 @@ function parseLocalTemplateInfo(folder, template) {
   if (template === "nuxt_content") {
     const content = import_node_fs5.default.readFileSync(import_node_path5.default.join(folder, "package.json"), { encoding: "utf8", flag: "r" });
     const info = JSON.parse(content);
-    if (!isValidVersion(info.version)) {
-      onError(t("error.validVersionNotDetected"));
-    }
     return {
       _template: template,
       name: info.name,
@@ -10828,9 +10823,6 @@ async function parseRemoteTemplateInfo(template) {
       "https://raw.githubusercontent.com/AlphaFoxz/create-github-pages-template-{{template}}/base/{{targetFile}}"
     ]);
     const info = JSON.parse(fetchResult);
-    if (!isValidVersion(info.version)) {
-      onError(t("error.validVersionNotDetected"));
-    }
     return {
       _template: template,
       name: info.name,

@@ -1,5 +1,5 @@
 import { TemplateType, TemplateInfo } from '../define'
-import { onError, isValidFolder, isValidVersion, isNever, strTemplate } from './common'
+import { onError, isValidFolder, isNever, strTemplate } from './common'
 import fs from 'node:fs'
 import path from 'node:path'
 
@@ -10,9 +10,6 @@ export function parseLocalTemplateInfo(folder: string, template: TemplateType): 
   if (template === 'nuxt_content') {
     const content = fs.readFileSync(path.join(folder, 'package.json'), { encoding: 'utf8', flag: 'r' })
     const info = JSON.parse(content)
-    if (!isValidVersion(info.version)) {
-      onError(t('error.validVersionNotDetected'))
-    }
     return {
       _template: template,
       name: info.name,
@@ -28,9 +25,6 @@ export async function parseRemoteTemplateInfo(template: TemplateType): Promise<T
       'https://raw.githubusercontent.com/AlphaFoxz/create-github-pages-template-{{template}}/base/{{targetFile}}',
     ])
     const info = JSON.parse(fetchResult)
-    if (!isValidVersion(info.version)) {
-      onError(t('error.validVersionNotDetected'))
-    }
     return {
       _template: template,
       name: info.name,

@@ -14,7 +14,6 @@ const zhDict: LangContent = {
   'info.templateIsAlreadyUpdated': '模板已经是最新版本的了',
   'error.duplicateFolder{name}': '同名文件夹或文件已存在：{name}',
   'error.invalidFolder{name}': '无效的文件夹：{name}',
-  'error.validVersionNotDetected': '未检测到有效版本',
   'error.subtitle': '错误: ',
   'error.userCancel': '用户终止了脚本执行',
   'error.downloadTemplate': '下载模板失败，请检查您的网络',
