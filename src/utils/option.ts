@@ -25,17 +25,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 8
       # Pick your own package manager and build script
-      - run: cd ${wikiRootPath} && pnpm install
+      - run: cd ${wikiRootPath} && npm install
       # Setup environment variables
       # NUXT_APP_BASE_URL is your GitHub Repo Name.
       - run: cd ${wikiRootPath} && echo 'NUXT_APP_BASE_URL=${prefix}' > ./.env
       # Build project
-      - run: cd ${wikiRootPath} && pnpm build
+      - run: cd ${wikiRootPath} && npx nuxt build --preset github_pages
       - name: Upload artifact 🚀
         uses: actions/upload-pages-artifact@v3
         with:
