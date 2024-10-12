@@ -10,5 +10,5 @@ await esbuild.build({
   format: 'cjs',
   platform: 'node',
   target: 'node18',
-  tsconfig: 'tsconfig.json',
+  tsconfig: 'tsconfig.build.json',
 })

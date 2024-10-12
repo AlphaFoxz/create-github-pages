@@ -3,10 +3,13 @@
   "include": [
     "src/*",
     "src/**/*",
+  ],
+  "exclude": [
     "__test__/*",
-    "__test__/**/*",
+    "__test__/**/*"
   ],
   "compilerOptions": {
+    "composite": true,
     "strict": false,
     "resolveJsonModule": true,
     "moduleResolution": "Bundler",
@@ -14,10 +17,5 @@
     "types": [
       "node"
     ],
-  },
-  "references": [
-    {
-      "path": "tsconfig.build.json"
-    }
-  ]
+  }
 }
