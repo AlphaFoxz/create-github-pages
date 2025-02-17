@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals'
+import { describe, expect, it } from 'vitest'
 import { isValidVersion, version, strTemplate, toValidFileName } from '../common'
 
 describe('测试公共函数', () => {

@@ -5,7 +5,7 @@ await esbuild.build({
   bundle: true,
   drop: ['debugger'],
   outfile: 'bin/create-github-pages.cjs',
-  sourcemap: true,
+  sourcemap: false,
   minify: true,
   format: 'cjs',
   platform: 'node',

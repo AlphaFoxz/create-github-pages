@@ -1,5 +1,8 @@
 import fs from 'node:fs'
 import nodePath from 'node:path'
+import { useI18n } from '../domain/i18n-agg'
+
+const t = useI18n().commands.t
 
 export async function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
@@ -136,7 +139,7 @@ export function getCurrentPath(): string {
   return process.cwd() || __dirname
 }
 
-export function strTemplate(template: string): typeof api {
+export function strTemplate(template: string) {
   let api = {
     template,
     map: {} as Record<string, string>,

@@ -1,8 +1,10 @@
-import './lang'
-import { useArgs } from './stores/args'
+import { useArgs } from './domain/args-agg'
 import { isNever, onCancel } from './utils/common'
-import createProcess from './process-create'
-import updateProcess from './process-update'
+import createProcess from './domain/execution-agg/process-create'
+import updateProcess from './domain/execution-agg/process-update'
+import { useI18n } from './domain/i18n-agg'
+
+const t = useI18n().commands.t
 
 init().catch((e: Error) => {
   console.error(e.message)
@@ -14,14 +16,14 @@ process.on('SIGINT', onCancel)
 async function init() {
   console.info(t('signal.scriptStarted'))
 
-  const argsStore = useArgs()
-  await argsStore.action.init()
-  if (argsStore.state.currerntOperation.value === 'create') {
+  const argsAgg = useArgs()
+  await argsAgg.commands.init()
+  if (argsAgg.states.currerntOperation.value === 'create') {
     await createProcess()
-  } else if (argsStore.state.currerntOperation.value === 'update') {
+  } else if (argsAgg.states.currerntOperation.value === 'update') {
     await updateProcess()
   } else {
-    isNever(argsStore.state.currerntOperation.value)
+    isNever(argsAgg.states.currerntOperation.value)
   }
   console.info(t('signal.exitWithSuccess'))
 }

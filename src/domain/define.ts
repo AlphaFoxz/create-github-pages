@@ -12,7 +12,7 @@ export type UpdateArgs = {
   branchName?: string
 }
 
-export type TemplateType = 'nuxt_content'
+export type TemplateType = 'nuxt_content' | 'vite_press'
 export type RepoType = 'git' | 'gitee'
 export type BranchType = 'base'
 

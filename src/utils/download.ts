@@ -1,10 +1,12 @@
 import path from 'node:path'
 import fs from 'node:fs'
-import { simpleGit, GitError } from 'simple-git'
-import type { TemplateType, RepoType, BranchType } from '../define'
+import { simpleGit } from 'simple-git'
+import type { TemplateType, BranchType } from '../domain/define'
 import { onError, strTemplate } from './common'
+import { useI18n } from '../domain/i18n-agg'
 
 const git = simpleGit()
+const t = useI18n().commands.t
 
 export async function download(template: TemplateType, localPath: string, branchName: BranchType = 'base') {
   await tryClone(template, localPath, branchName, [

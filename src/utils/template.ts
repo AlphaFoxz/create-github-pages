@@ -1,13 +1,16 @@
-import { TemplateType, TemplateInfo } from '../define'
+import { TemplateType, TemplateInfo } from '../domain/define'
 import { onError, isValidFolder, isNever, strTemplate } from './common'
 import fs from 'node:fs'
 import path from 'node:path'
+import { useI18n } from '../domain/i18n-agg'
+
+const t = useI18n().commands.t
 
 export function parseLocalTemplateInfo(folder: string, template: TemplateType): TemplateInfo {
   if (!isValidFolder(folder)) {
     onError(t('error.invalidFolder{name}', { name: folder }))
   }
-  if (template === 'nuxt_content') {
+  if (template === 'nuxt_content' || template === 'vite_press') {
     const content = fs.readFileSync(path.join(folder, 'package.json'), { encoding: 'utf8', flag: 'r' })
     const info = JSON.parse(content)
     return {
@@ -20,7 +23,7 @@ export function parseLocalTemplateInfo(folder: string, template: TemplateType): 
 }
 
 export async function parseRemoteTemplateInfo(template: TemplateType): Promise<TemplateInfo> {
-  if (template === 'nuxt_content') {
+  if (template === 'nuxt_content' || template === 'vite_press') {
     const fetchResult = await tryFetchRemoteTemplateInfo(template, 'package.json', [
       'https://raw.githubusercontent.com/AlphaFoxz/create-github-pages-template-{{template}}/base/{{targetFile}}',
     ])
